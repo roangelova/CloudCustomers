@@ -1,3 +1,4 @@
+using CloudCustomers.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -8,18 +9,27 @@ namespace CloudCustomers.Api.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
+        private readonly IUsersService usersService;
 
-        private readonly ILogger<UsersController> _logger;
-
-        public UsersController(ILogger<UsersController> logger)
+        public UsersController(IUsersService _usersService)
         {
-            _logger = logger;
+            usersService = _usersService;
         }
 
         [HttpGet(Name = "GetUsers")]
         public async Task<IActionResult> Get()
         {
-            return null;
+            var users = await usersService.GetAllUsers();
+
+            if (users.Any())
+            {
+                return Ok(users);
+            }
+            else
+            {
+                return NotFound();
+            }
+
         }
     }
 }
