@@ -1,8 +1,11 @@
+using CloudCustomers.Api.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
+
+ConfigureServices(builder.Services);
 
 // Add services to the container.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -30,3 +33,10 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+void ConfigureServices(IServiceCollection services)
+{
+    services.AddTransient<IUsersService, UsersService>();
+
+}
