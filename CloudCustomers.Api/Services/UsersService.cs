@@ -18,9 +18,19 @@ namespace CloudCustomers.Api.Services
             httpClient = _httpClient;
         }
 
-        public Task<List<User>> GetAllUsers()
+        public async Task<List<User>> GetAllUsers()
         {
-            throw new NotImplementedException();
+            var response = await httpClient.GetAsync("https://example.com");
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return new List<User>();
+            }
+
+            var responseContent = response.Content;
+            var allUsers = await responseContent.ReadFromJsonAsync<List<User>>();
+
+            return allUsers.ToList();
         }
     }
 }
