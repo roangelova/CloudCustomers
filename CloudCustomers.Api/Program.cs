@@ -1,3 +1,4 @@
+using CloudCustomers.Api.Models.Config;
 using CloudCustomers.Api.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -37,6 +38,8 @@ app.Run();
 
 void ConfigureServices(IServiceCollection services)
 {
+    services.Configure<UsersApiOptions>(builder.Configuration
+        .GetSection("UsersApiOptions"));
     services.AddTransient<IUsersService, UsersService>();
     services.AddHttpClient<IUsersService, UsersService>();
 
