@@ -2,6 +2,7 @@
 using CloudCustomers.Api.Services;
 using CloudCustomers.UnitTests.Fixtures;
 using CloudCustomers.UnitTests.Helpers;
+using FluentAssertions;
 using Moq;
 using Moq.Protected;
 using System;
@@ -37,7 +38,36 @@ namespace CloudCustomers.UnitTests.Systems.Services
                 ItExpr.IsAny<CancellationToken>()
                 );
             
-         
+        }
+
+        [Fact]
+        public async Task GetAllUsers_WhenHits404_ReturnsEmptyListOfUsers()
+        {
+            var expectedResponse = UsersFixture.GetTestUsers();
+            var handlerMock = MockHttpMessageHandler<User>.SetupReturn404();
+            var httpClient = new HttpClient(handlerMock.Object);
+            var sut = new UsersService(httpClient);
+
+            var result = await sut.GetAllUsers();
+
+            result.Count.Should().Be(0);
+
+        }
+
+
+        [Fact]
+        public async Task GetAllUsers_WhenCalled_ReturnsListOfUsersOfExpectedSize()
+        {
+            var expectedResponse = UsersFixture.GetTestUsers();
+            var handlerMock = MockHttpMessageHandler<User>
+                .SetupBasicGetResorceList(expectedResponse);
+            var httpClient = new HttpClient(handlerMock.Object);
+            var sut = new UsersService(httpClient);
+
+            var result = await sut.GetAllUsers();
+
+            result.Count.Should().Be(expectedResponse.Count);
+
         }
     }
 }
